@@ -1,0 +1,26 @@
+body {
+  width: 500px;
+  margin: auto;
+  font-family: Arial;
+  color: #333333;
+}
+
+h1.logo {
+  font-weight: 400;
+  font-size: 40px;
+}
+
+
+h2.event-title {
+  font-weight: 300;
+}
+
+.event-location {
+  color: #999999;
+  margin: 5px 0;
+}
+
+.event-datetime {
+  color: #FD7E14;
+  margin: 5px 0;
+}
