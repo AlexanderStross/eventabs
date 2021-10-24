@@ -8,7 +8,7 @@ class Event extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      edit_path: "",
+      editPath: "",
       event: {}
     }
   }
@@ -20,7 +20,7 @@ class Event extends React.Component {
         url: `http://localhost:3001/events/${this.props.match.params.id}`,
         headers: JSON.parse(localStorage.getItem('user'))
       }).then((response) => {
-        this.setState({event: response.data, edit_path: `/events/${this.props.match.params.id}/edit`});
+        this.setState({event: response.data, editPath: response.data.currentUserCanEdit ? `/events/${this.props.match.params.id}/edit` : null });
         localStorage.removeItem('currentUserCanEdit');
         localStorage.setItem('currentUserCanEdit', (this.state.event.currentUserCanEdit).toString());
       });
@@ -30,9 +30,9 @@ class Event extends React.Component {
   render() {
     return (
       <div className="event">
-        {this.state.event.currentUserCanEdit &&
+        {this.state.editPath &&
           <Link
-            to= {this.state.edit_path} >
+            to= {this.state.editPath} >
             Edit
           </Link>
         }

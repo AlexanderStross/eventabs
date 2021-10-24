@@ -11,8 +11,6 @@ import NotFound from './NotFound'
 
 function App() {
   const currentUser = localStorage.getItem('user')
-  const currentUserCanEdit = localStorage.getItem('currentUserCanEdit')
-  console.log(currentUserCanEdit)
   return (<Router history={history}>
     <Route path="/">
       <AppHeader/>
@@ -27,7 +25,7 @@ function App() {
           : <Redirect to='/login'/>)}/>
       <Route exact="exact" path="/events/:id" render={routeProps => (<Event {...routeProps}/>)}/>
       <Route exact="exact" path="/events/:id/edit" render={routeProps => (
-          currentUser && toBoolean(currentUserCanEdit)
+          currentUser && toBoolean(localStorage.getItem('currentUserCanEdit'))
           ? <EventForm {...routeProps}/>
           : <Redirect to='/login'/>)}/>
       <Route exact="exact" path="/login">

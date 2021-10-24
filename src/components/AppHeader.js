@@ -11,6 +11,7 @@ const handleSignOut = function(e) {
   })
   .then(() => {
     localStorage.removeItem('user')
+    localStorage.removeItem('currentUserCanEdit')
     window.location = '/'
   })
 }

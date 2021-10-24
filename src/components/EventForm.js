@@ -56,7 +56,6 @@ class EventForm extends React.Component {
           description: {valid: true, value: response.data.description},
           currentUserCanEdit: {valid: true, value: response.data.currentUserCanEdit}
         }, this.validateForm)
-        console.log(this.state.currentUserCanEdit)
         this.resetApiErrors();
       })
       .catch(error => {
