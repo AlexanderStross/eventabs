@@ -1,25 +1,205 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import FormErrors from './FormErrors'
+import validations from '../validations'
+import axios from 'axios'
+//import { useLocation } from 'react-router-dom'
 
-const EventForm = (props) => (
-  <div>
-    <h4>Create an Event:</h4>
-    <form onSubmit={props.handleSubmit}>
-      <input type="text" name="title" placeholder="Title" value={props.title} onChange={props.handleInput} />
-      <input type="text" name="start_datetime" placeholder="Date" value={props.start_datetime} onChange={props.handleInput} />
-      <input type="text" name="location" placeholder="Location" value={props.location} onChange={props.handleInput} />
-      <input type='submit' value='Make Event' disabled={!props.formValid} />
-    </form>
-  </div>
-)
+class EventForm extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      title: {value: '', valid: false},
+      start_datetime: {value: '', valid: false},
+      location: {value: '', valid: false},
+      image_url: {value: '', valid: false},
+      description: {value: '', valid: false},
+      successMessage: '',
+      formErrors: {},
+      apiErrors: {},
+      formValid: false,
+      editing: false
+    }
+    this.successMessageTimeoutHandle = 0
+  }
+
+  static formValidations = {
+    title: [
+      (value) => { return(validations.checkMinLength(value, 3)) }
+    ],
+    start_datetime: [
+      (value) => { return(validations.checkMinLength(value, 1)) },
+      (value) => { return(validations.timeShouldBeInTheFuture(value)) }
+    ],
+    location: [
+      (value) => { return(validations.checkMinLength(value, 1)) }
+    ],
+    image_url: [],
+    description: []
+  }
+
+  componentDidMount () {
+    if (this.props.match) {
+    if (this.props.match.path === '/events/:id/edit') {
+      this.setState({editing: this.props.match.path === '/events/:id/edit'})
+      axios({
+        method: "GET",
+        url: `http://localhost:3001/events/${this.props.match.params.id}`,
+        headers: JSON.parse(localStorage.getItem('user'))
+      })
+      .then((response) => {
+        this.setState({
+          title: {valid: true, value: response.data.title},
+          location: {valid: true, value: response.data.location},
+          start_datetime: {valid: true, value: new Date(response.data.start_datetime).toDateString()},
+          image_url: {valid: true, value: response.data.image_url},
+          description: {valid: true, value: response.data.description},
+          currentUserCanEdit: {valid: true, value: response.data.currentUserCanEdit}
+        }, this.validateForm)
+        console.log(this.state.currentUserCanEdit)
+        this.resetApiErrors();
+      })
+      .catch(error => {
+        console.log(error)
+        this.setState({
+          apiErrors: error
+        })
+      })
+    }
+  }
+}
+
+componentWillUnmount() {
+    clearTimeout(this.successMessageTimeoutHandle);
+}
+
+
+  handleInput = e => {
+    e.preventDefault()
+    const name = e.target.name
+    const value = e.target.value
+    const newState = {}
+    newState[name] = {...this.state[name], value: value}
+    this.setState(newState, () => this.validateField(name, value, EventForm.formValidations[name]))
+  }
+
+  handleSubmit = e => {
+    e.preventDefault()
+
+    const event = {
+      title: this.state.title.value,
+      start_datetime: this.state.start_datetime.value,
+      location: this.state.location.value,
+      image_url: this.state.image_url.value,
+      description: this.state.description.value,
+    }
+    const method = this.state.editing ? 'PUT' : 'POST'
+    const url = this.state.editing ? `http://localhost:3001/events/${this.props.match.params.id}` : 'http://localhost:3001/events'
+
+    axios({
+      method: method,
+      url: url,
+      headers: JSON.parse(localStorage.user),
+      data: { event: event }
+    })
+    .then(response => {
+      if(!this.state.editing && this.props.onSuccess) {
+        this.props.onSuccess(response.data)
+      }
+      this.resetFormErrors();
+      if (this.props.match.path === '/create') {this.setSuccessMessage('Your Event Has Been Created Successfully!')}
+      if (this.props.match.path === '/events/:id/edit') {this.setSuccessMessage('Your Event Has Been Edited Successfully!')}
+    })
+    .catch(error => {
+      this.setState({formErrors: error.response.data, formValid: false})
+    })
+  }
+
+  validateField(fieldName, fieldValue, fieldValidations) {
+    let fieldValid = true
+    let errors = fieldValidations.reduce((errors, validation) => {
+      let [valid, fieldError] = validation(fieldValue)
+      if(!valid) {
+        errors = errors.concat([fieldError])
+      }
+      return(errors);
+    }, []);
+
+    fieldValid = errors.length === 0
+
+    const newState = {formErrors: {...this.state.formErrors, [fieldName]: errors}}
+    newState[fieldName] = {...this.state[fieldName], valid: fieldValid}
+    this.setState(newState, this.validateForm)
+  }
+
+  validateForm() {
+    this.setState({formValid: this.state.title.valid && this.state.location.valid && this.state.start_datetime.valid})
+  }
+
+  resetFormErrors () {
+    this.setState({formErrors: {}})
+  }
+
+  resetApiErrors() {
+    this.setState({apiErrors: {}})
+  }
+
+  deleteEvent = () => {
+    if(window.confirm("Are you sure you want to delete this event?")) {
+      axios({
+        method: 'DELETE',
+        url: `http://localhost:3001/events/${this.props.match.params.id}`,
+        headers: JSON.parse(localStorage.getItem('user'))
+      }).then((response) => {
+        this.props.history.push('/')
+      })
+    }
+  }
+
+  setSuccessMessage(message) {
+      this.setState({
+          successMessage: message
+      });
+      clearTimeout(this.successMessageTimeoutHandle);
+      this.successMessageTimeoutHandle = setTimeout(() => {
+          this.setState({
+              successMessage: ''
+          });
+          this.successMessageTimeoutHandle = 0;
+      }, 3000)
+  }
+
+  render() {
+    return (
+      <div>
+        <h4>{this.state.editing ? "Edit Event" : "Create a new Event"}</h4>
+        {this.state.successMessage && (
+               <div className="alert alert-success text-center">
+                   {this.state.successMessage}
+               </div>
+           )}
+        <FormErrors formErrors = {this.state.formErrors} />
+        <form onSubmit={this.handleSubmit}>
+          <input type="text" name="title" placeholder="Title" value={this.state.title.value} onChange={this.handleInput} />
+          <input type="text" name="start_datetime" placeholder="Date" value={this.state.start_datetime.value} onChange={this.handleInput} />
+          <input type="text" name="location" placeholder="Location" value={this.state.location.value} onChange={this.handleInput} />
+          <input type="text" name="image_url" placeholder="Image URL" value={this.state.image_url.value} onChange={this.handleInput} />
+          <input type="textarea" name="description" placeholder="description" value={this.state.description.value} onChange={this.handleInput} />
+          <input type="submit" value={this.state.editing ? "Update Event" : "Create Event"}
+           disabled={!this.state.formValid} />
+        </form>
+        {this.state.editing &&
+        <p>
+          <button onClick={this.deleteEvent}>Delete Event</button>
+        </p>
+        }
+      </div>
+    )
+  }
+}
 
 EventForm.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
-  handleInput: PropTypes.func.isRequired,
-  formValid: PropTypes.bool.isRequired,
-  title: PropTypes.string.isRequired,
-  start_datetime: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
+  onSuccess: PropTypes.func,
 }
 
 export default EventForm
