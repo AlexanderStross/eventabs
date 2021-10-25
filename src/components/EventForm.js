@@ -18,7 +18,9 @@ class EventForm extends React.Component {
       formErrors: {},
       apiErrors: {},
       formValid: false,
-      editing: false
+      editing: false,
+      deleteConfirm: false,
+      deleteConfirmMessage: ""
     }
     this.successMessageTimeoutHandle = 0
   }
@@ -60,9 +62,10 @@ class EventForm extends React.Component {
       })
       .catch(error => {
         console.log(error)
-        this.setState({
-          apiErrors: error
-        })
+        // this.setState({
+        //   apiErrors: error
+        // })
+        this.props.history.push('/')
       })
     }
   }
@@ -144,16 +147,25 @@ componentWillUnmount() {
   }
 
   deleteEvent = () => {
-    if(window.confirm("Are you sure you want to delete this event?")) {
-      axios({
-        method: 'DELETE',
-        url: `http://localhost:3001/events/${this.props.match.params.id}`,
-        headers: JSON.parse(localStorage.getItem('user'))
-      }).then((response) => {
-        this.props.history.push('/')
-      })
-    }
+    axios({
+      method: 'DELETE',
+      url: `http://localhost:3001/events/${this.props.match.params.id}`,
+      headers: JSON.parse(localStorage.getItem('user'))
+    }).then((response) => {
+      this.props.history.push('/')
+    })
   }
+
+  deleteConfirm = () => {
+    this.setState({deleteConfirm: true,
+      deleteConfirmMessage: "Are you sure you want to delete this event?"})
+  }
+
+  deleteCancel = () => {
+    this.setState({deleteConfirm: false,
+      deleteConfirmMessage: ""})
+  }
+
 
   setSuccessMessage(message) {
       this.setState({
@@ -188,9 +200,19 @@ componentWillUnmount() {
            disabled={!this.state.formValid} />
         </form>
         {this.state.editing &&
-        <p>
-          <button onClick={this.deleteEvent}>Delete Event</button>
-        </p>
+          !this.state.deleteConfirm
+          ? (<>
+            <p>
+              <button onClick={this.deleteConfirm}>Delete Event</button>
+            </p>
+            </>)
+            :
+            (<>
+            <p>{this.state.deleteConfirmMessage} </p>
+            <p>
+              <button onClick={this.deleteCancel}>Cancel</button> <button onClick={this.deleteEvent}>Yes, delete this event</button>
+            </p>
+            </>)
         }
       </div>
     )

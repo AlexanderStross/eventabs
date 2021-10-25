@@ -9,6 +9,7 @@ class Event extends React.Component {
     super(props)
     this.state = {
       editPath: "",
+      apiErrors: {},
       event: {}
     }
   }
@@ -21,9 +22,14 @@ class Event extends React.Component {
         headers: JSON.parse(localStorage.getItem('user'))
       }).then((response) => {
         this.setState({event: response.data, editPath: response.data.currentUserCanEdit ? `/events/${this.props.match.params.id}/edit` : null });
-        localStorage.removeItem('currentUserCanEdit');
         localStorage.setItem('currentUserCanEdit', (this.state.event.currentUserCanEdit).toString());
-      });
+      }).catch(error => {
+        console.log(error);
+        // this.setState({
+        //   apiErrors: error
+        // })
+        this.props.history.push('/')
+      })
     }
   }
 
