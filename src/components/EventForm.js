@@ -20,7 +20,6 @@ class EventForm extends React.Component {
       formValid: false,
       editing: false,
       deleteConfirm: false,
-      deleteConfirmMessage: ""
     }
     this.successMessageTimeoutHandle = 0
   }
@@ -156,17 +155,6 @@ componentWillUnmount() {
     })
   }
 
-  deleteConfirm = () => {
-    this.setState({deleteConfirm: true,
-      deleteConfirmMessage: "Are you sure you want to delete this event?"})
-  }
-
-  deleteCancel = () => {
-    this.setState({deleteConfirm: false,
-      deleteConfirmMessage: ""})
-  }
-
-
   setSuccessMessage(message) {
       this.setState({
           successMessage: message
@@ -200,19 +188,13 @@ componentWillUnmount() {
            disabled={!this.state.formValid} />
         </form>
         {this.state.editing &&
-          !this.state.deleteConfirm
-          ? (<>
-            <p>
-              <button onClick={this.deleteConfirm}>Delete Event</button>
-            </p>
-            </>)
-            :
-            (<>
-            <p>{this.state.deleteConfirmMessage} </p>
-            <p>
-              <button onClick={this.deleteCancel}>Cancel</button> <button onClick={this.deleteEvent}>Yes, delete this event</button>
-            </p>
-            </>)
+          (!this.state.deleteConfirm
+          ? (<><p>
+              <button onClick={() => { this.setState({ deleteConfirm: true })}}>Delete Event</button>
+            </p></>)
+          : (<><p>Are you sure you want to delete this event?</p><p>
+              <button onClick={() => { this.setState({ deleteConfirm: false })}}>Cancel</button> <button onClick={this.deleteEvent}>Yes, delete this event</button>
+            </p></>))
         }
       </div>
     )
