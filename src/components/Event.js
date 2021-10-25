@@ -21,7 +21,7 @@ class Event extends React.Component {
         url: `http://localhost:3001/events/${this.props.match.params.id}`,
         headers: JSON.parse(localStorage.getItem('user'))
       }).then((response) => {
-        this.setState({event: response.data, editPath: response.data.currentUserCanEdit ? `/events/${this.props.match.params.id}/edit` : null });
+        this.setState({event: response.data, editPath: response.data.currentUserCanEdit ? `/events/${this.props.match.params.id}/edit` : undefined });
         localStorage.setItem('currentUserCanEdit', (this.state.event.currentUserCanEdit).toString());
       }).catch(error => {
         console.log(error);
