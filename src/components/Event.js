@@ -1,55 +1,48 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { useParams, Link, } from 'react-router-dom'
+import history from './../history'
 
-const formatDate = datetime => new Date(datetime).toDateString()
+function Event(props){
+  const [event, setEvent] = useState({})
+  const [editPath, setEditPath] = useState({})
 
-class Event extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      editPath: "",
-      apiErrors: {},
-      event: {}
-    }
-  }
+const formatDate = datetime =>
+  new Date(datetime).toDateString()
+  let { id } = useParams()
 
-  componentDidMount () {
-    if(this.props.match) {
+  useEffect(() => {
       axios({
         method: "GET",
-        url: `http://localhost:3001/events/${this.props.match.params.id}`,
+        url: `http://localhost:3001/events/${id}`,
         headers: JSON.parse(localStorage.getItem('user'))
       }).then((response) => {
-        this.setState({event: response.data, editPath: response.data.currentUserCanEdit ? `/events/${this.props.match.params.id}/edit` : undefined });
-        localStorage.setItem('currentUserCanEdit', (this.state.event.currentUserCanEdit).toString());
+        setEvent(response.data)
+        setEditPath(response.data.currentUserCanEdit ? `/events/${response.data.id}/edit` : undefined )
+        localStorage.setItem('currentUserCanEdit', response.data.currentUserCanEdit.toString())
       }).catch(error => {
-        console.log(error);
+        console.log(error)
         // this.setState({
         //   apiErrors: error
         // })
-        this.props.history.push('/')
+        history.push('/')
       })
-    }
-  }
+    }, [id])
 
-  render() {
-    return (
-      <div className="event">
-        {this.state.editPath &&
-          <Link
-            to= {this.state.editPath} >
-            Edit
-          </Link>
-        }
-        {this.state.event.image_url && <img alt="" src={this.state.event.image_url} />}
-        <h2 className="event-title">{this.state.event.title}</h2>
-        <div className="event-datetime">{formatDate(this.state.event.start_datetime)}</div>
-        <div className="event-location">{this.state.event.location}</div>
-        <div className="event-description">{this.state.event.description}</div>
-      </div>
-    )
-  }
+  return (
+    <div className="event">
+      {editPath &&
+        <Link to= {editPath} >
+          Edit
+        </Link>
+      }
+      {event.image_url && <img alt="" src={event.image_url} />}
+      <h2 className="event-title">{event.title}</h2>
+      <div className="event-datetime">{formatDate(event.start_datetime)}</div>
+      <div className="event-location">{event.location}</div>
+      <div className="event-description">{event.description}</div>
+    </div>
+  )
 }
 
 export default Event

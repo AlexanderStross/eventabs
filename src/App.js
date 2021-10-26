@@ -23,7 +23,9 @@ function App() {
           currentUser
           ? <EventForm {...routeProps}/>
           : <Redirect to='/login'/>)}/>
-      <Route exact="exact" path="/events/:id" render={routeProps => (<Event {...routeProps}/>)}/>
+      <Route exact path="/events/:id">
+        <Event/>
+      </Route>
       <Route exact="exact" path="/events/:id/edit" render={routeProps => (
           currentUser && toBoolean(localStorage.getItem('currentUserCanEdit'))
           ? <EventForm {...routeProps}/>
