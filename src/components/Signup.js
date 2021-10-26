@@ -1,15 +1,28 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 
-class Signup extends React.Component {
-  handleSignup = (e) => {
-    e.preventDefault()
+function Signup(props){
+  const [error, setError] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const handleSignup = useCallback(
+    event => {
+      event.preventDefault();
+      setEmail(event.target.elements.email.value)
+      setPassword(event.target.elements.password.value)
+    },
+    [setEmail,setPassword]
+  );
+
+  useEffect((e) => {
+     if (email && password) {
     axios({
       method: 'POST',
       url: 'http://localhost:3001/auth',
       data: {
-        email: this.email.value,
-        password: this.password.value
+        email: email,
+        password: password
       }
     })
     .then(response => {
@@ -21,20 +34,26 @@ class Signup extends React.Component {
       }))
       window.location = '/'
     })
+    .catch(error => {
+      console.log(error)
+      setEmail();
+      setPassword();
+      setError(error);
+    })
   }
+}, [error,email,password])
 
-  render () {
+
     return (
       <div>
         <h2>Sign up</h2>
-        <form onSubmit={this.handleSignup} >
-          <input name="email" ref={(input) => this.email = input } />
-          <input name="password" type="password" ref={(input) => this.password = input } />
+        <form onSubmit={handleSignup} >
+          <input name="email"  />
+          <input name="password" type="password"  />
           <input type="submit"/>
         </form>
       </div>
     )
   }
-}
 
 export default Signup
