@@ -1,5 +1,4 @@
 import React from 'react'
-import { MDBContainer } from 'mdb-react-ui-kit';
 import axios from 'axios'
 import EventsList from './EventsList'
 
@@ -29,10 +28,8 @@ class Eventlite extends React.Component {
 
   render() {
     return (
-      <MDBContainer breakpoint="lg">
-        <h1 className="h4 mt-3">Latest events</h1>
-        <EventsList events={this.state.events} />
-      </MDBContainer>
+        <><h1 className="h4 mt-3">Latest events</h1>
+        <EventsList events={this.state.events} /></>
     )
   }
 }

@@ -1,15 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import EventSummary from './EventSummary'
+import { MDBContainer, MDBRow } from 'mdb-react-ui-kit';
 
 const EventsList = props => (
-  <div>
+  <MDBContainer>
+      <MDBRow>
     {props.events.map(function(event){
       return(
         <EventSummary key={event.id} event={event} />
       )
     })}
-  </div>
+    </MDBRow>
+ </MDBContainer>
 )
 
 EventsList.propTypes = {

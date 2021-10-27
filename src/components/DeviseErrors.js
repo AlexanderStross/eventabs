@@ -1,18 +1,19 @@
-import React from 'react'
+import React from 'react';
+import { MDBContainer, MDBAlert } from 'mdb-react-ui-kit';
 import PropTypes from 'prop-types'
 
 const DeviseErrors = (props) =>
-  <div>
-    {Object.keys(props.formErrors).map((formErrorField) => {
+  Object.keys(props.formErrors).map((formErrorField) => {
       return (
         props.formErrors[formErrorField].map((error) => {
           return (
-            <p>{formErrorField} {error}</p>
+            <MDBContainer>
+              <MDBAlert show className='w-100' color='danger'>{formErrorField} {error}</MDBAlert>
+            </MDBContainer>
           )
         })
       )
-    })}
-  </div>
+    })
 
   DeviseErrors.propTypes = {
     formErrors: PropTypes.object

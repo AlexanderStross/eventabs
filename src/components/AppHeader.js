@@ -47,7 +47,7 @@ function AppHeader() {
         <MDBNavbarNav className='mr-auto mb-2 mb-lg-0 justify-content-end'>
           {
             currentUser
-              ? <><MDBBtn outline color="success" className='me-2' type='button' onClick={() => history.push('/create')}>
+              ? <><MDBBtn size='sm' rounded color='success'  className='me-2' type='button' onClick={() => history.push('/create')}>
                   Create Event
                 </MDBBtn>
               <span className='navbar-text'>

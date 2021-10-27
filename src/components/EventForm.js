@@ -9,7 +9,7 @@ import {
   MDBCard,
   MDBCardBody,
   MDBCardTitle,
-  MDBCardText,
+  // MDBCardText,
   MDBBtn,
   // MDBInputGroup,
   // MDBInputGroupText,
@@ -182,33 +182,34 @@ componentWillUnmount() {
 
   render() {
     return (
-      <MDBContainer breakpoint="sm">
-      <MDBCard style={{ maxWidth: '60rem' }}>
-      <MDBCardBody stype="mt-3">
-        <MDBCardTitle>{this.state.editing ? "Edit Event" : "Create a new Event"}</MDBCardTitle>
+      <MDBContainer className='mt-3' breakpoint="sm">
+      <MDBCard style={{ maxWidth: '90rem' }}>
+      <MDBCardBody>
+        <MDBCardTitle className='mb-3'>{this.state.editing ? "Edit Event" : "Create a new Event"}</MDBCardTitle>
         {this.state.successMessage && (
                <div className="alert alert-success text-center">
                    {this.state.successMessage}
                </div>
            )}
         <FormErrors formErrors = {this.state.formErrors} />
+        <div className="form-outline mb-2">
         <form onSubmit={this.handleSubmit}>
-          <MDBInput type="text" name="title" label="Title" value={this.state.title.value} onChange={this.handleInput} />
-          <MDBInput type="text" name="start_datetime" label="Date" value={this.state.start_datetime.value} onChange={this.handleInput} />
-          <MDBInput type="text" name="location" label="Location" value={this.state.location.value} onChange={this.handleInput} />
-          <MDBInput label='Image URL input' id='typeURL' type='url' value={this.state.image_url.value} onChange={this.handleInput} />
-          <MDBInput label='Description' name="description" id="description" textarea rows={6} value={this.state.description.value} onChange={this.handleInput} />
+          <MDBInput className='mb-3' type="text" name="title" label="Title" value={this.state.title.value} onChange={this.handleInput} />
+          <MDBInput className='mb-3' type="text" name="start_datetime" label="Date" value={this.state.start_datetime.value} onChange={this.handleInput} />
+          <MDBInput className='mb-3' type="text" name="location" label="Location" value={this.state.location.value} onChange={this.handleInput} />
+          <MDBInput className='mb-3' type="url" name="image_url" label='Image URL input' id='typeURL'  value={this.state.image_url.value} onChange={this.handleInput} />
+          <MDBInput className='mb-3' label='Description' name="description" id="description" textarea rows={6} value={this.state.description.value} onChange={this.handleInput} />
           <MDBInput type="submit" value={this.state.editing ? "Update Event" : "Create Event"}
            disabled={!this.state.formValid} />
         </form>
+        </div>
         {this.state.editing &&
           (!this.state.deleteConfirm
-          ? (<><p>
-              <button onClick={() => { this.setState({ deleteConfirm: true })}}>Delete Event</button>
-            </p></>)
-          : (<><p>Are you sure you want to delete this event?</p><p>
-              <button onClick={() => { this.setState({ deleteConfirm: false })}}>Cancel</button> <button onClick={this.deleteEvent}>Yes, delete this event</button>
-            </p></>))
+          ? <MDBBtn color='danger' onClick={() => { this.setState({ deleteConfirm: true })}}>Delete Event</MDBBtn>
+          : (<><div>Are you sure you want to delete this event?</div>
+            <div>
+              <MDBBtn color='success' onClick={() => { this.setState({ deleteConfirm: false })}}>Cancel</MDBBtn> <MDBBtn color='danger' onClick={this.deleteEvent}>Yes, delete this event</MDBBtn>
+            </div></>))
         }
         </MDBCardBody>
       </MDBCard>
