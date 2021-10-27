@@ -195,7 +195,7 @@ componentWillUnmount() {
         <div className="form-outline mb-2">
         <form onSubmit={this.handleSubmit}>
           <MDBInput className='mb-3' type="text" name="title" label="Title" value={this.state.title.value} onChange={this.handleInput} />
-          <MDBInput className='mb-3' type="text" name="start_datetime" label="Date" value={this.state.start_datetime.value} onChange={this.handleInput} />
+          <MDBInput className='mb-3' type="text" name="start_datetime" label="State Date" value={this.state.start_datetime.value} onChange={this.handleInput} />
           <MDBInput className='mb-3' type="text" name="location" label="Location" value={this.state.location.value} onChange={this.handleInput} />
           <MDBInput className='mb-3' type="url" name="image_url" label='Image URL input' id='typeURL'  value={this.state.image_url.value} onChange={this.handleInput} />
           <MDBInput className='mb-3' label='Description' name="description" id="description" textarea rows={6} value={this.state.description.value} onChange={this.handleInput} />
