@@ -3,6 +3,18 @@ import PropTypes from 'prop-types'
 import FormErrors from './FormErrors'
 import validations from '../validations'
 import axios from 'axios'
+import {
+  MDBContainer,
+  MDBInput,
+  MDBCard,
+  MDBCardBody,
+  MDBCardTitle,
+  MDBCardText,
+  MDBBtn,
+  // MDBInputGroup,
+  // MDBInputGroupText,
+  // MDBInputGroupElement
+} from 'mdb-react-ui-kit';
 //import { useLocation } from 'react-router-dom'
 
 class EventForm extends React.Component {
@@ -170,8 +182,10 @@ componentWillUnmount() {
 
   render() {
     return (
-      <div>
-        <h4>{this.state.editing ? "Edit Event" : "Create a new Event"}</h4>
+      <MDBContainer breakpoint="sm">
+      <MDBCard style={{ maxWidth: '60rem' }}>
+      <MDBCardBody stype="mt-3">
+        <MDBCardTitle>{this.state.editing ? "Edit Event" : "Create a new Event"}</MDBCardTitle>
         {this.state.successMessage && (
                <div className="alert alert-success text-center">
                    {this.state.successMessage}
@@ -179,12 +193,12 @@ componentWillUnmount() {
            )}
         <FormErrors formErrors = {this.state.formErrors} />
         <form onSubmit={this.handleSubmit}>
-          <input type="text" name="title" placeholder="Title" value={this.state.title.value} onChange={this.handleInput} />
-          <input type="text" name="start_datetime" placeholder="Date" value={this.state.start_datetime.value} onChange={this.handleInput} />
-          <input type="text" name="location" placeholder="Location" value={this.state.location.value} onChange={this.handleInput} />
-          <input type="text" name="image_url" placeholder="Image URL" value={this.state.image_url.value} onChange={this.handleInput} />
-          <input type="textarea" name="description" placeholder="description" value={this.state.description.value} onChange={this.handleInput} />
-          <input type="submit" value={this.state.editing ? "Update Event" : "Create Event"}
+          <MDBInput type="text" name="title" label="Title" value={this.state.title.value} onChange={this.handleInput} />
+          <MDBInput type="text" name="start_datetime" label="Date" value={this.state.start_datetime.value} onChange={this.handleInput} />
+          <MDBInput type="text" name="location" label="Location" value={this.state.location.value} onChange={this.handleInput} />
+          <MDBInput label='Image URL input' id='typeURL' type='url' value={this.state.image_url.value} onChange={this.handleInput} />
+          <MDBInput label='Description' name="description" id="description" textarea rows={6} value={this.state.description.value} onChange={this.handleInput} />
+          <MDBInput type="submit" value={this.state.editing ? "Update Event" : "Create Event"}
            disabled={!this.state.formValid} />
         </form>
         {this.state.editing &&
@@ -196,7 +210,9 @@ componentWillUnmount() {
               <button onClick={() => { this.setState({ deleteConfirm: false })}}>Cancel</button> <button onClick={this.deleteEvent}>Yes, delete this event</button>
             </p></>))
         }
-      </div>
+        </MDBCardBody>
+      </MDBCard>
+      </MDBContainer>
     )
   }
 }

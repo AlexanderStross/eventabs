@@ -1,7 +1,8 @@
 import React from 'react'
+import { MDBContainer } from 'mdb-react-ui-kit';
 import axios from 'axios'
 import EventsList from './EventsList'
-import history from './../history'
+
 
 import './Eventlite.css'
 
@@ -25,27 +26,13 @@ class Eventlite extends React.Component {
     })
   }
 
-  addNewEvent = (event) => {
-    const events = [...this.state.events, event].sort(function(a, b){
-      return new Date(a.start_datetime) - new Date(b.start_datetime)
-    })
-    this.setState({events: events})
-  }
-
-
 
   render() {
-    const currentUser = localStorage.getItem('user')
     return (
-      <div>
-        {currentUser &&
-           <form>
-            <button type="button" onClick={() => history.push('/create')}>Create Event</button>
-          </form>
-          // <EventForm onSuccess={this.addNewEvent} />
-        }
+      <MDBContainer breakpoint="lg">
+        <h1 className="h4 mt-3">Latest events</h1>
         <EventsList events={this.state.events} />
-      </div>
+      </MDBContainer>
     )
   }
 }
